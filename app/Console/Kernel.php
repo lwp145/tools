@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call('bing:daily')->dailyAt('17:00');
+        $schedule->command('bing:daily')->dailyAt('17:15');
     }
 
     /**
