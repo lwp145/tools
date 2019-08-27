@@ -9,6 +9,9 @@ class TestsController extends ApiController
 {
     public function test()
     {
-        return 'test';
+        $data = [
+            'test' => 'body'
+        ];
+        return $this->response->array($data);
     }
 }
