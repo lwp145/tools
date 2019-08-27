@@ -17,9 +17,24 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
-    'namespace' => 'App\Http\Controllers\Api\V1'
+    'namespace' => 'App\Http\Controllers\Api\V1',
+    'middleware' => ['serializer:array', 'bindings']
 ], function($api) {
 
-    $api->get('test', 'TestsController@test')
-        ->name('api.test.test');
+    $api->group([
+        'middleware' => 'api.throttle',
+        'limit' => 60,
+        'expires' => 1,
+    ], function ($api) {
+
+    });
+
+    $api->group([
+
+    ], function ($api) {
+        $api->get('test', 'TestsController@test')
+            ->name('api.test.test');
+    });
+
+
 });
