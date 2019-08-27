@@ -23,3 +23,18 @@ function unique_rand($min, $max, $num) {
     shuffle($return);
     return $return;
 }
+
+/**
+ * 判断时间戳是否当天
+ * @param int $timestamp
+ * @return bool
+ */
+function is_today(int $timestamp)
+{
+    $date = date('Y-m-d', $timestamp);
+    $today = date('Y-m-d');
+    if ($date == $today) {
+        return true;
+    }
+    return false;
+}

@@ -30,6 +30,13 @@ class BingImagesController extends ApiController
         $bing = new BingPhoto();
         $image = $bing->getImage();
 
+        if (!is_today(strtotime($image['fullstartdate']))) {
+            // 今天的图还没出来，先拿最近的吧
+            return $this->response->array([
+                'url' => $image['url']
+            ]);
+        }
+
         // 上传七牛并保存数据库
 
         $file_name = 'image/bing-'.$image['fullstartdate'].'.jpg';
@@ -42,7 +49,8 @@ class BingImagesController extends ApiController
             'path_type' => 'qiniu',
             'path' => $file_name,
             'original_path' => $image['url'],
-            'source' => 'bing'
+            'source' => 'bing',
+            'created_at' => date('Y-m-d H:i:s', strtotime($image['fullstartdate']))
         ];
         $imageModel->fill($data);
         $imageModel->save();
