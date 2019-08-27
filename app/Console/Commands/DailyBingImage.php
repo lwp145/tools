@@ -41,6 +41,17 @@ class DailyBingImage extends Command
     public function handle()
     {
         $num = is_numeric($this->argument('num')) ?$this->argument('num') : 1;
+
+        if ($num == '1') {
+            $imageModel = new Image();
+            // 先查看今天是否存在
+            $today = $imageModel->query()->whereDate('created_at', '=', date('Y-m-d'))->first();
+            if ($today) {
+                $this->line('已存在无需保存！');
+                return ;
+            }
+        }
+
         $bing = new BingPhoto([
             'n' => $num
         ]);
