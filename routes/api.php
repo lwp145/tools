@@ -34,6 +34,12 @@ $api->version('v1', [
     ], function ($api) {
         $api->get('test', 'TestsController@test')
             ->name('api.test.test');
+
+        $api->get('bing-image/today', 'BingImagesController@today')
+            ->name('api.bing-image.today');
+
+        $api->get('bing-image/random', 'BingImagesController@random')
+            ->name('api.bing-image.random');
     });
 
 
