@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Handlers\UploadHandler;
 use App\Models\Image;
+use App\Services\ImagesService;
 use grubersjoe\BingPhoto;
 use Illuminate\Console\Command;
 
@@ -48,36 +49,15 @@ class DailyBingImage extends Command
         }
 
         $name = uniqid(date('Y-m-d-')).'.jpg';
-        $path = 'image/bing/'.$name;
 
-        $md5 = md5_file($image['url']);
-        $sha1 = sha1_file($image['url']);
+        $save_data = ImagesService::instance()->saveBingImage($name, $image['url'], $image['copyright']);
 
-        $imageModel = new Image();
-        // 如果文件存在就不保存了
-        $where = [
-            'md5' => $md5,
-            'sha1' => $sha1,
-        ];
-        if ($imageModel->query()->where($where)->first()) {
-            $this->error('文件已存在'); return ;
+        if (empty($save_data)) {
+            $this->error('已经存在'); return ;
         }
 
-        $data = [
-            'name' => $name,
-            'desc' => $image['copyright'] ?? '',
-            'path_type' => 'qiniu',
-            'path' => $path,
-            'original_path' => $image['url'],
-            'source' => 'bing',
-            'md5' => $md5,
-            'sha1' => $sha1
-        ];
-        $imageModel->fill($data);
-        $imageModel->save();
-
         // 保存到七牛云
-        $url = app(UploadHandler::class)->qiNiuSave($path, $image['url']);
+        $url = app(UploadHandler::class)->qiNiuSave($save_data['path'], $image['url']);
 
         $this->line($url . ' 保存成功！');
     }
