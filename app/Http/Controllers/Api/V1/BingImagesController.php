@@ -37,6 +37,8 @@ class BingImagesController extends ApiController
         if ($row < $num) {
             $num = $row;
         }
+        // 规定一个最大限制
+        $num = min(10, $num);
 
         // 获取随机数
         $random_id = unique_rand($min_id, $max_id, $num);

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Handlers\UploadHandler;
-use App\Models\Image;
 use App\Services\ImagesService;
 use grubersjoe\BingPhoto;
 use Illuminate\Console\Command;
