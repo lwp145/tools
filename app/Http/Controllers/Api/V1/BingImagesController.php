@@ -18,22 +18,9 @@ class BingImagesController extends ApiController
      */
     public function today()
     {
-        $imageModel = new Image();
-        // 先查看今天是否存在
-        $today = $imageModel->query()->whereDate('created_at', '=', date('Y-m-d'))->first();
-        if ($today) {
-            return $this->response->array([
-                'url' => $today->path
-            ]);
-        }
-
         $bing = new BingPhoto();
         $image = $bing->getImage();
-
-        // 不存在的话，直接获取
-        return $this->response->array([
-            'url' => $image['url']
-        ]);
+        return $this->response->array($image);
     }
 
     /**
