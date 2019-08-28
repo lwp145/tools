@@ -40,41 +40,45 @@ class DailyBingImage extends Command
      */
     public function handle()
     {
-        $num = is_numeric($this->argument('num')) ?$this->argument('num') : 1;
+        $bing = new BingPhoto();
+        $image = $bing->getImage();
 
-        if ($num == '1') {
-            $imageModel = new Image();
-            // 先查看今天是否存在
-            $today = $imageModel->query()->whereDate('created_at', '=', date('Y-m-d'))->first();
-            if ($today) {
-                $this->line('已存在无需保存！');
-                return ;
-            }
+        if (empty($image['url'])) {
+            $this->error('url为空'); return ;
         }
 
-        $bing = new BingPhoto([
-            'n' => $num
-        ]);
-        $images = $bing->getImages();
+        $name = uniqid(date('Y-m-d-')).'.jpg';
+        $path = 'image/bing/'.$name;
 
-        foreach ($images as $image) {
-            $file_name = 'image/bing-'.$image['fullstartdate'].'.jpg';
-            // 保存到七牛云
-            $url = app(UploadHandler::class)->qiNiuSave($file_name, $image['url']);
+        $md5 = md5_file($image['url']);
+        $sha1 = sha1_file($image['url']);
 
-            $imageModel = new Image();
-            $data = [
-                'name' => $image['copyright'],
-                'desc' => '',
-                'path_type' => 'qiniu',
-                'path' => $file_name,
-                'original_path' => $image['url'],
-                'source' => 'bing',
-                'created_at' => date('Y-m-d H:i:s', strtotime($image['fullstartdate']))
-            ];
-            $imageModel->fill($data);
-            $imageModel->save();
-            $this->line($url . ' 保存成功！');
+        $imageModel = new Image();
+        // 如果文件存在就不保存了
+        $where = [
+            'md5' => $md5,
+            'sha1' => $sha1,
+        ];
+        if ($imageModel->query()->where($where)->first()) {
+            $this->error('文件已存在'); return ;
         }
+
+        $data = [
+            'name' => $name,
+            'desc' => $image['copyright'] ?? '',
+            'path_type' => 'qiniu',
+            'path' => $path,
+            'original_path' => $image['url'],
+            'source' => 'bing',
+            'md5' => $md5,
+            'sha1' => $sha1
+        ];
+        $imageModel->fill($data);
+        $imageModel->save();
+
+        // 保存到七牛云
+        $url = app(UploadHandler::class)->qiNiuSave($path, $image['url']);
+
+        $this->line($url . ' 保存成功！');
     }
 }

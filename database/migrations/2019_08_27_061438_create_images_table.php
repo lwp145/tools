@@ -21,6 +21,8 @@ class CreateImagesTable extends Migration
             $table->string('path', 1024)->comment('访问路径');
             $table->string('original_path', 2048)->comment('原始路径');
             $table->string('source')->comment('图片来源');
+            $table->char('md5', 32)->comment('文件md5')->index();
+            $table->char('sha1', 40)->comment('文件sha1')->index();
             $table->timestamps();
         });
     }

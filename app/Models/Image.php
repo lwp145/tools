@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class Image extends Model
 {
     public $fillable = [
-        'name', 'desc', 'path_type', 'path', 'original_path', 'source', 'created_at'
+        'name', 'desc', 'path_type', 'path', 'original_path', 'source', 'created_at', 'md5', 'sha1'
     ];
 
     /**
