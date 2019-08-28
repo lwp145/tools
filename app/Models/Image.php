@@ -22,7 +22,7 @@ class Image extends Model
         $url = '';
         switch ($this->path_type) {
             case 'qiniu':
-                $url = Storage::disk('qiniu')->url($value);
+                $url = Storage::disk('qiniu')->url($value).'?imageView2/1/w/700/h/393/q/75';
                 break;
             default:
         }
