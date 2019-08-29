@@ -16,3 +16,5 @@ Route::get('/', function () {
 });
 
 Route::get('/images/rand', 'ImagesController@random')->name('images.rand');
+
+Route::get('qr-code', 'QrCodesController@show')->name('qr-code.show');
